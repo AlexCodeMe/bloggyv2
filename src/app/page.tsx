@@ -1,8 +1,7 @@
-import AuthModal from "@/components/auth-modal";
 import { auth } from "@/lib/auth";
-import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import ClientLanding from "@/components/client-home"; // Client component for the interactive parts
+import { Button } from "@/components/ui/button";
 
 export default async function Home() {
   const session = await auth();
@@ -13,16 +12,25 @@ export default async function Home() {
 
   return (
     <div className="">
-      <div className="flex py-5 items-center justify-between bg-rose-100 px-8">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.png" alt="logo" width={70} height={70} />
-          <h4 className="text-3xl font-semibold">
-            Alex<span className="text-primary">ander</span>
-          </h4>
-        </Link>
-        <AuthModal />
-      </div>
-      <h1>Hello World</h1>
+      {/** Load the client-side landing page component */}
+      <main className="flex-grow">
+        <ClientLanding /> {/* Only rendered when not authenticated */}
+      </main>
+
+      {/** Footer */}
+      <footer className="flex py-5 items-center justify-between px-8">
+        <p className="font-semibold">
+          &copy; {new Date().getFullYear()} Alexander. All rights reserved.
+        </p>
+        <div className="flex gap-4">
+          <Button variant="ghost" className="text-zinc-600">
+            Terms of Service
+          </Button>
+          <Button variant="outline" className="text-zinc-600">
+            Our Sponsors
+          </Button>
+        </div>
+      </footer>
     </div>
   );
 }

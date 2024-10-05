@@ -2,24 +2,70 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
- 
+
 generator client {
   provider = "prisma-client-js"
 }
- 
-model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+
+// Blog post model
+model Post {
+  id        String  @id @default(cuid())
+  title     String
+  published Boolean @default(false)
+  content   String
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments Comment[]  // One-to-many relationship with comments
+  tags     Tag[]      @relation("PostTags") // Many-to-many relationship with tags
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
+// Comment model
+model Comment {
+  id        String  @id @default(cuid())
+  content   String
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  postId   String
+  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Tag model with many-to-many relationship to posts
+model Tag {
+  id        String  @id @default(cuid())
+  name      String  @unique
+
+  posts     Post[]  @relation("PostTags") // Many-to-many relationship with posts
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// User model
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  bio           String?
+  accounts      Account[]
+  sessions      Session[]
+  posts         Post[]     // Relation to posts
+  comments      Comment[]  // Relation to comments
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Account model
 model Account {
   userId            String
   type              String
@@ -32,29 +78,31 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
+// Session model
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
+// VerificationToken model
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
