@@ -1,8 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import ClientLanding from "@/components/client-home"; // Client component for the interactive parts
+import ClientLanding from "@/components/client-home";
 import { Button } from "@/components/ui/button";
-
 export default async function Home() {
   const session = await auth();
 
@@ -14,7 +13,7 @@ export default async function Home() {
     <div className="">
       {/** Load the client-side landing page component */}
       <main className="flex-grow">
-        <ClientLanding /> {/* Only rendered when not authenticated */}
+        <ClientLanding /> Only rendered when not authenticated
       </main>
 
       {/** Footer */}

@@ -1,25 +1,18 @@
 "use client";
 
 import React from "react";
-import { credentialsSignIn, githubSignIn, googleSignIn } from "@/actions/auth-actions";
-import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { githubSignIn, googleSignIn } from "@/actions/auth-actions";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "../ui/dialog";
+import { Button } from "../ui/button";
+import Image from "next/image";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
 
 export default function AuthModal({ label }: { label: string }) {
-  async function handleCredentialsSignIn(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const form = e.target as HTMLFormElement;
-    const username = (form.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
-
-    await credentialsSignIn(username, password);
-    
     console.log("Form submitted");
   };
 
@@ -43,7 +36,7 @@ export default function AuthModal({ label }: { label: string }) {
             Sign in to your account or create a new one
           </p>
 
-          <form className="my-8" onSubmit={handleCredentialsSignIn}>
+          <form className="my-8" onSubmit={handleSubmit}>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="email">Email Address</Label>
               <Input id="email" placeholder="you@example.com" type="email" />
