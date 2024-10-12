@@ -1,9 +1,18 @@
 "use client";
 
-import React from "react";
-import { credentialsSignIn, githubSignIn, googleSignIn } from "@/actions/auth-actions";
+import React, { useState } from "react";
+import {
+  credentialsSignin,
+  githubSignIn,
+  googleSignIn,
+} from "@/actions/auth-actions";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogHeader, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
@@ -11,22 +20,52 @@ import { Input } from "@/components/ui/input";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 
 export default function AuthModal({ label }: { label: string }) {
+  const [registering, setRegistering] = useState(false);
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    if (registering) {
+      handleCredentialsRegister(e);
+    } else {
+      handleCredentialsSignIn(e);
+    }
+  }
+
   async function handleCredentialsSignIn(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const form = e.target as HTMLFormElement;
-    const username = (form.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement)
+      .value;
 
-    await credentialsSignIn(username, password);
-    
+    await credentialsSignin({ email, password });
+
     console.log("Form submitted");
-  };
+  }
+
+  async function handleCredentialsRegister(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
+    e.preventDefault();
+
+    const form = e.target as HTMLFormElement;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const username = (form.elements.namedItem("username") as HTMLInputElement)
+      .value;
+    const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement)
+      .value;
+
+
+    console.log("Form submitted");
+  }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="">{label}</Button>
+        <Button variant="ghost" className="">
+          {label}
+        </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[420px]">
         <DialogHeader className="flex-row justify-center items-center gap-x-2">
@@ -37,22 +76,42 @@ export default function AuthModal({ label }: { label: string }) {
         </DialogHeader>
         <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
           <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-            Welcome to Alexander
+            Welcome to Bloggy
           </h2>
           <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
             Sign in to your account or create a new one
           </p>
 
-          <form className="my-8" onSubmit={handleCredentialsSignIn}>
+          <form className="my-8" onSubmit={handleSubmit}>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="email">Email Address</Label>
               <Input id="email" placeholder="you@example.com" type="email" />
             </LabelInputContainer>
+
+            {registering && (
+              <>
+                <LabelInputContainer className="mb-4">
+                  <Label htmlFor="email">Username</Label>
+                  <Input
+                    id="email"
+                    placeholder="you@example.com"
+                    type="email"
+                  />
+                </LabelInputContainer>
+                <LabelInputContainer className="mb-4">
+                  <Label htmlFor="name">Your Name</Label>
+                  <Input
+                    id="name"
+                    placeholder="Jane Doe"
+                    type="text"
+                  />
+                </LabelInputContainer>
+              </>
+            )}
             <LabelInputContainer className="mb-4">
               <Label htmlFor="password">Password</Label>
               <Input id="password" placeholder="••••••••" type="password" />
             </LabelInputContainer>
-
             <button
               className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
               type="submit"

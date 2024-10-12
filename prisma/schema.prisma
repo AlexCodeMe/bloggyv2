@@ -7,42 +7,40 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Blog post model
 model Post {
   id        String  @id @default(cuid())
   title     String
   published Boolean @default(false)
   content   String
+  bannerUrl String?
 
   authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  comments Comment[]  // One-to-many relationship with comments
-  tags     Tag[]      @relation("PostTags") // Many-to-many relationship with tags
+  author   User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments Comment[]
+  tags     Tag[]     @relation("PostTags")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// Comment model
 model Comment {
-  id        String  @id @default(cuid())
-  content   String
+  id      String @id @default(cuid())
+  content String
 
   authorId String
   author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
   postId   String
-  post     Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post     Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// Tag model with many-to-many relationship to posts
 model Tag {
-  id        String  @id @default(cuid())
-  name      String  @unique
+  id   String @id @default(cuid())
+  name String @unique
 
-  posts     Post[]  @relation("PostTags") // Many-to-many relationship with posts
+  posts Post[] @relation("PostTags")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -50,16 +48,18 @@ model Tag {
 
 // User model
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  bio           String?
-  accounts      Account[]
-  sessions      Session[]
-  posts         Post[]     // Relation to posts
-  comments      Comment[]  // Relation to comments
+  id             String    @id @default(cuid())
+  name           String?
+  username       String?   @unique
+  email          String    @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  image          String?
+  bio            String?
+  accounts       Account[]
+  sessions       Session[]
+  posts          Post[] // Relation to posts
+  comments       Comment[] // Relation to comments
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

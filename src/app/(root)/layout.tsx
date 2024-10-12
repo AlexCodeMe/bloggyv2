@@ -1,8 +1,21 @@
 import React from "react";
 import Navbar from "./_components/navbar";
 import Sidebar from "./_components/sidebar";
+import { useAuth } from "@/hooks/useAuth";
+import { getUserById } from "@/actions/user-actions";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default async function Layout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const session = await useAuth();
+
+  const user = await getUserById(session?.user?.id as string);
+  if (!user) {
+    return <div>User not found</div>;
+  }
+
   return (
     <div className="flex flex-col h-screen">
       {/* Navbar: fixed at the top */}
@@ -20,9 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Main content */}
-        <div className="flex-grow p-6">
-          {children}
-        </div>
+        <div className="flex-grow p-6">{children}</div>
       </div>
     </div>
   );

@@ -57,9 +57,17 @@ export function GithubAuthButton() {
 }
 
 export function SignOutButton() {
-  const { pending } = useFormStatus();
+  const handleSignOut = async () => {
+    try {
+      localStorage.clear();
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
+  };
+
   return (
-    <Button disabled={pending} variant="ghost" className="" onClick={() => signOut()}>
+    <Button variant="ghost" className="" onClick={handleSignOut}>
       Sign out
     </Button>
   );
